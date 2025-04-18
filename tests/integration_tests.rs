@@ -8,7 +8,7 @@ use hello_rust::components::{
 
 #[test]
 fn test_program_counter() {
-    let mut pc = ProgramCounter::new();
+    let mut pc = ProgramCounter::new(256); // メモリサイズを指定
 
     // 初期値は0
     assert_eq!(pc.get(), 0);
@@ -25,6 +25,16 @@ fn test_program_counter() {
 
     pc.update(true); // 再度クロックの立ち上がりでインクリメント
     assert_eq!(pc.get(), 2);
+
+    // メモリにデータをロードして読み取るテスト
+    pc.load_memory(0, 42); // アドレス0に42をロード
+    pc.load_memory(1, 84); // アドレス1に84をロード
+
+    pc.set(0); // アドレスを0に設定
+    assert_eq!(pc.read(), 42); // アドレス0のデータを確認
+
+    pc.set(1); // アドレスを1に設定
+    assert_eq!(pc.read(), 84); // アドレス1のデータを確認
 
     // オーバーフローの確認
     pc.set(u16::MAX);
