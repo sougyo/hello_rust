@@ -22,3 +22,29 @@ impl DFlipFlop {
         self.state
     }
 }
+
+pub struct Memory {
+    data: Vec<u8>,
+}
+
+impl Memory {
+    pub fn new(size: usize) -> Self {
+        Memory {
+            data: vec![0; size], // 指定されたサイズのメモリを初期化
+        }
+    }
+
+    pub fn read(&self, address: u16) -> u8 {
+        if (address as usize) < self.data.len() {
+            self.data[address as usize]
+        } else {
+            0
+        }
+    }
+
+    pub fn write(&mut self, address: u16, value: u8) {
+        if (address as usize) < self.data.len() {
+            self.data[address as usize] = value;
+        }
+    }
+}

@@ -2,19 +2,23 @@ mod components;
 
 use components::{
     program_counter::ProgramCounter,
-    alu::ALU4Bit,
+    alu::{ALU4Bit, OP_AND, OP_OR, OP_XOR, OP_ADD},
     gates::{u8_to_bool_array, bool_array_to_u8},
+    memory::Memory,
 };
 
 fn main() {
-    // プログラムカウンタの初期化（メモリサイズを指定）
-    let mut pc = ProgramCounter::new(256); // 256バイトのメモリを持つ
+    // メモリの初期化（256バイトのメモリを持つ）
+    let mut memory = Memory::new(256);
+
+    // プログラムカウンタの初期化
+    let mut pc = ProgramCounter::new();
 
     // メモリに操作コードをロード
-    pc.load_memory(0, 0); // AND操作
-    pc.load_memory(1, 1); // OR操作
-    pc.load_memory(2, 2); // XOR操作
-    pc.load_memory(3, 3); // 加算操作
+    memory.write(0, OP_AND); // AND操作
+    memory.write(1, OP_OR);  // OR操作
+    memory.write(2, OP_XOR); // XOR操作
+    memory.write(3, OP_ADD); // 加算操作
 
     // ALUの初期化
     let mut alu = ALU4Bit::new();
@@ -39,8 +43,8 @@ fn main() {
         pc.update(clock);
 
         if clock {
-            let op = pc.read(); // 現在のアドレスから操作コードを取得
-            alu.execute(op, true); // 操作コードを実行
+            let op = pc.read(&memory); // 現在のアドレスから操作コードを取得
+            alu.execute(op, true, &mut memory); // 操作コードを実行
             println!(
                 "{}\t{}\t{}\t{}",
                 clock,
